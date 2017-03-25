@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learning Vue</title>
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+  <p id='directive' v-if="seen">Now you see the link {{ url }}</p>
+  <div id='argument'>
+    <a v-bind:href="url">Test Link</a>
+  </div>
+  <script>
+    var data = { a: 1};
+    var vm = new Vue({
+      data: data
+    });
+
+    var seeMe = new Vue({
+      el: '#directive',
+      data: {
+        seen: true,
+        url: 'https://www.sina.com.cn'
+      }
+    });
+
+    var directiveArgument = new Vue({
+      el: '#argument',
+      data: {
+        url : 'https://www.google.com'
+      }
+    });
+  </script>
+</body>
+</html>

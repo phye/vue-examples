@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learning Vue</title>
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+  <div id="example-2">
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+  </div>
+
+  <div id="example-3">
+    <my-list v-bind:items=pItems></my-list>
+  </div>
+
+  <div id="example-4">
+    <input v-model="parentMsg">
+    <br>
+    <child v-bind:my-message="parentMsg"></child>
+  </div>
+
+  <div id="example-5">
+    <p>{{ total }}</p>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+  </div>
+
+  <div id="example-6">
+    <currency-input v-model="price"></currency-input>
+  </div>
+
+  <div id="example-7">
+    <h1>I'm the parent title</h1>
+    <my-component>
+      <p>This is some original content</p>
+      <p>This is some more original content</p>
+    </my-component>
+  </div>
+
+  <div id="example-8">
+    <app-layout>
+      <h1 slot="header">Here might be a page title</h1>
+      <p>A paragraph for the main content</p>
+      <p>And another one</p>
+
+      <p slot="footer">Here's some contact info</p>
+    </app-layout>
+  </div>
+
+  <div id="example-9">
+    <child>
+      <template scope="props">
+        <span>Hello from parent</span>
+        <span>{{ props.text }}</span>
+      </template>
+    </child>
+  </div>
+
+  <div id="example-10">
+    <my-awesome-list v-bind:items=pItems>
+      <template slot="itemSlot" scope="props">
+        <li>{{ props.msg }}</li>
+      </template>
+    </my-awesome-list>
+  </div>
+
+  <script>
+    Vue.component('simple-counter', {
+      template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+      data: function () {
+        return {
+          counter: 0
+        }
+      }
+    });
+
+    new Vue({
+      el: '#example-2'
+    });
+
+    var myList = new Vue({
+      el: '#example-3',
+      data: {
+        pItems: [
+          { name: 'Hello' },
+          { name: 'World!' }
+        ]
+      },
+      components: {
+        'my-list': {
+          props: ['items'],
+          template: `
+          <ul>
+            <li v-for="item in items">
+              {{ item.name }}
+            </li>
+          </ul>
+          `
+        }
+      }
+    });
+
+    Vue.component('child', {
+      props: ['myMessage'],
+      template: '<p>{{ myMessage }}</p>'
+    })
+
+    new Vue({
+      el: '#example-4',
+      data: {
+        parentMsg: ''
+      }
+    })
+
+    Vue.component('button-counter', {
+      template: '<button v-on:click="increment">{{ counter }}</button>',
+      data: function () {
+        return {
+          counter: 0
+        }
+      },
+      methods: {
+        increment: function () {
+          this.counter += 1
+          this.$emit('increment')
+        }
+      }
+    })
+
+    new Vue({
+      el: '#example-5',
+      data: {
+        total: 0
+      },
+      methods: {
+        incrementTotal: function () {
+          this.total += 1
+        }
+      }
+    })
+
+    Vue.component('currency-input', {
+      props: [ 'value' ],
+      template: `
+        <span>
+          $
+          <input 
+            ref="input"
+            v-bind:value="value"
+            v-on:input="updateValue($event.target.value)"
+          >
+        </span>
+      `,
+      methods: {
+        updateValue: function (value) {
+          var formattedValue = value
+            .trim()
+            .slice(0, value.indexOf('.') + 3)
+
+            if (formattedValue !== value) {
+              this.$refs.input.value = formattedValue
+            }
+            this.$emit('input', Number(formattedValue))
+        }
+      }
+    })
+
+    var app6 = new Vue({
+      el: '#example-6',
+      data: {
+        price: ''
+      }
+    })
+
+    Vue.component('my-component', {
+      template: `
+      <div>
+        <h2>I'm the child title</h2>
+        <slot>
+          This will only be displayed if there is no content
+          to be distributed
+        </slot>
+      </div>
+      `
+    });
+
+    var app7 = new Vue({
+      el: '#example-7'
+    });
+
+    Vue.component('app-layout', {
+      template: `
+      <div class="container">
+        <header>
+          <slot name="header"></slot>
+        </header>
+        <main>
+          <slot></slot>
+        </main>
+        <footer>
+          <slot name="footer"></slot>
+        </footer>
+      </div>
+      `
+    })
+
+    var app8 = new Vue({
+      el: '#example-8'
+    });
+
+    var app9 = new Vue({
+      el: '#example-9',
+      components: {
+        child: {
+          template: `
+          <div>
+            <slot text="hello from child"></slot>
+          </div>
+          `
+        }
+
+      }
+    })
+
+    var app10 = new Vue({
+      el: '#example-10',
+      components: {
+        'my-awesome-list': {
+          props: [ 'items' ],
+          template: `
+          <ul>
+            <slot name="itemSlot"
+                  v-for='item in items'
+                  :msg = "item.text" >
+            </slot>
+          </ul>
+          `
+        },
+      },
+      data: {
+        pItems: [
+          { text: 'hello' },
+          { text: 'world' },
+          { text: 'this is named slot' }
+        ]
+      }
+    })
+
+  </script>
+</body>
+</html>

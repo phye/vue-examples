@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learning Vue</title>
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+  <div id="class-object" v-bind:class="classObject">classObject</div>
+
+  <div id="class-array" v-bind:class="[activeClass, errorClass]">classArray</div>
+  <script>
+    var app1 = new Vue({
+      el: '#class-object',
+      data: {
+        isActive: true,
+        error: null
+      },
+      computed: {
+        classObject: function () {
+          return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal',
+          }
+        }
+      }
+    });
+
+    var app2 = new Vue({
+      el: '#class-array',
+      data: {
+        activeClass: 'active',
+        errorClass: 'text-danger'
+      }
+    });
+  </script>
+</body>
+</html>
